@@ -9,6 +9,10 @@ dist-ssr
 .idea
 .DS_Store
 
+# Workbooks — 개인 연습용, 레포에 안 올림
+**/EXERCISE.md
+src/patterns/_template/
+
 # Logs
 logs
 *.log
