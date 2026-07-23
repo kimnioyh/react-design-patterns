@@ -3,12 +3,11 @@ import { toastStore } from './toastStore'
 
 // React 내장 옵저버 훅. store.subscribe로 구독하고 getSnapshot으로 현재 값을 읽는다.
 // 직접 만든 store가 React의 pub-sub 메커니즘에 그대로 꽂힌다.
-function useToasts() {
-  return useSyncExternalStore(toastStore.subscribe, toastStore.getSnapshot)
-}
+const useToasts = () =>
+  useSyncExternalStore(toastStore.subscribe, toastStore.getSnapshot)
 
 // 구독자: store만 보고 있으면 누가 발행했는지 알 필요가 없다.
-function ToastContainer() {
+const ToastContainer = () => {
   const toasts = useToasts()
   return (
     <div className="toast-container">
@@ -27,7 +26,7 @@ function ToastContainer() {
 }
 
 // 발행자: 버튼은 ToastContainer의 존재를 모른다. store.show만 부른다.
-export default function ObserverDemo() {
+const ObserverDemo = () => {
   return (
     <section>
       <h2>Observer (pub-sub) → Toast 알림</h2>
@@ -50,3 +49,5 @@ export default function ObserverDemo() {
     </section>
   )
 }
+
+export default ObserverDemo

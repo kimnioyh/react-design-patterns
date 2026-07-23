@@ -2,7 +2,7 @@ import { NavLink, Navigate, Route, Routes } from 'react-router-dom'
 import { patterns } from './patterns'
 import './App.css'
 
-export default function App() {
+const App = () => {
   return (
     <div className="layout">
       <nav className="sidebar">
@@ -31,3 +31,5 @@ export default function App() {
     </div>
   )
 }
+
+export default App
