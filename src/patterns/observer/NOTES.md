@@ -14,6 +14,37 @@
                             (서로 모름, prop 전달 없음)
 ```
 
+## show vs dismiss — 반대 방향의 두 발행
+| | `show` | `dismiss` |
+|---|---|---|
+| 하는 일 | 배열에 **추가** | 배열에서 **제거** |
+| 인자 | message, type, ttl | id |
+| 누가 부르나 | 발행자(버튼 등) | ① 사용자가 토스트 클릭 ② `show`가 건 타이머(ttl 뒤) |
+| 반환 | 새 `id` | 없음 |
+
+연결고리: `show`가 `id`를 만들고 그 `id`로 `setTimeout(() => dismiss(id), ttl)`을 예약한다.
+그래서 **자동 사라짐** = show가 미리 걸어둔 타이머가 dismiss를 부르는 것,
+**클릭 즉시 닫힘** = Container의 onClick이 같은 dismiss를 부르는 것. 둘 다 끝에 `notify()`.
+
+## notify / listener는 무슨 일을 하나
+`listener`는 우리가 만든 함수가 아니라 **React가 `subscribe`에 넣어준 콜백**이다
+(`useSyncExternalStore`가 등록한 "store 바뀌었으니 다시 확인해" 신호선).
+
+`notify()`가 `listener()`를 호출하면 React는:
+1. `getSnapshot()`을 다시 읽는다 → 현재 `toasts`
+2. 직전 값과 **참조 비교**(`Object.is`)
+3. 참조가 달라졌으면 → 구독 중인 컴포넌트(`ToastContainer`) **리렌더 예약**
+4. 리렌더 시 `useToasts()`가 새 `toasts`를 반환 → 목록이 다시 그려짐
+
+즉 `listener()` 호출 = "React야, store 확인하고 필요하면 다시 그려"라고 두드리는 것.
+실제 렌더 여부는 React가 getSnapshot 비교로 판단한다.
+
+## 왜 매번 새 배열을 만드나 (불변성)
+- `show`/`dismiss`에서 `[...toasts, x]` / `filter`로 **새 배열**을 만드는 이유 = 참조가 바뀌어야
+  위 3번에서 "바뀌었네" 판정 → 리렌더가 일어난다.
+- 반대로 변화가 없을 때 `getSnapshot`이 매번 새 배열을 주면 늘 "바뀜" 판정 → **무한 리렌더**.
+  그래서 변화 없을 땐 반드시 같은 참조를 반환해야 한다.
+
 ## React에 이미 내장된 대응물
 - `useSyncExternalStore(subscribe, getSnapshot)` — React 공식 외부 store 구독 훅. Redux/Zustand도 내부적으로 이걸 쓴다.
 - `EventTarget` / `addEventListener` — 브라우저 기본 pub-sub.
