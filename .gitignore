@@ -9,9 +9,13 @@ dist-ssr
 .idea
 .DS_Store
 
-# Workbooks — 개인 연습용, 레포에 안 올림
+# Workbooks / 개인 연습용 — 레포에 안 올림
 **/EXERCISE.md
 src/patterns/_template/
+src/patterns/observer/test.ts
+src/patterns/observer/demotest.tsx
+# 연습 파일은 .scratch. 를 붙이면 자동 무시됨 (예: foo.scratch.tsx)
+**/*.scratch.*
 
 # Logs
 logs
